@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const CountryCard = ({ name, flag, altText }) => {
   return (
     <div
+      className="countryCard"
       style={{
         display: "flex",
         flexDirection: "column",
@@ -31,24 +32,25 @@ const CountryCard = ({ name, flag, altText }) => {
   );
 };
 
-const API_URL = "https://restcountries.com/v3.1/all";
+const API_URL = 'https://restcountries.com/v3.1/all';
 
 function Countries() {
   const [countries, setCountries] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [filteredCountries, setFilteredCountries] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(API_URL);
-        const jsonRes = await response.json();
-        setCountries(jsonRes);
-        setFilteredCountries(jsonRes);
+        const data = await response.json();
+        setCountries(data);
+        setFilteredCountries(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
+
     fetchData();
   }, []);
 
@@ -82,10 +84,6 @@ function Countries() {
           marginBottom: "20px",
           border: "1px solid #ddd",
           borderRadius: "4px",
-          display:"flex",
-          justifyItems:"center",
-          alignItems:"center",
-          margin:"0px auto"
         }}
       />
       <div
