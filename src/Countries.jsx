@@ -11,18 +11,19 @@ const CountryCard = ({ name, flag, altText }) => {
         gap: "2px",
         border: "1px solid black",
         borderRadius: "8px",
-        height: "100px",
-        width: "100px",
-        margin: "10px auto ",
+        height: "120px",
+        width: "120px",
+        margin: "10px",
         padding: "10px",
+        boxSizing: "border-box",
       }}
     >
       <img
         src={flag}
         alt={altText}
         style={{
-          width: "50px",
-          height: "50px",
+          width: "80px",
+          height: "60px",
         }}
       />
       <h2 style={{ textAlign: "center", fontSize: "0.9rem" }}>{name}</h2>
@@ -30,42 +31,81 @@ const CountryCard = ({ name, flag, altText }) => {
   );
 };
 
-const API_URL = "https://xcountries-backend.azurewebsites.net/all";
+const API_URL = "https://restcountries.com/v3.1/all";
 
 function Countries() {
   const [countries, setCountries] = useState([]);
-  // const temp = [1, 2, 3, 4, 5,6];
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredCountries, setFilteredCountries] = useState([]);
+
   useEffect(() => {
-    //fetch data
     const fetchData = async () => {
-    try {
+      try {
         const response = await fetch(API_URL);
         const jsonRes = await response.json();
         setCountries(jsonRes);
-      
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-  fetchData();
+        setFilteredCountries(jsonRes);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
   }, []);
 
+  useEffect(() => {
+    const results = countries.filter(country =>
+      country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredCountries(results);
+  }, [searchTerm, countries]);
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-      }}
-    >
-      {countries.map((country) => (
-        <CountryCard
-          key={country.abbr}
-          name={country.name}
-          flag={country.flag}
-          altText={country.abbr}
-        />
-      ))}
+    <div style={{ padding: "20px" }}>
+      <input
+        type="text"
+        placeholder="Search for a country"
+        value={searchTerm}
+        onChange={handleSearch}
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          padding: "10px",
+          fontSize: "16px",
+          marginBottom: "20px",
+          border: "1px solid #ddd",
+          borderRadius: "4px",
+          display:"flex",
+          justifyItems:"center",
+          alignItems:"center",
+          margin:"0px auto"
+        }}
+      />
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
+        {filteredCountries.length > 0 ? (
+          filteredCountries.map((country) => (
+            <CountryCard
+              key={country.cca3}
+              name={country.name.common}
+              flag={country.flags.png}
+              altText={country.name.common}
+            />
+          ))
+        ) : (
+          <p>No countries found</p>
+        )}
+      </div>
     </div>
   );
 }
+
 export default Countries;
