@@ -53,10 +53,14 @@ function Countries() {
   }, []);
 
   useEffect(() => {
-    const results = countries.filter(country =>
-      country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredCountries(results);
+    if (searchTerm) {
+      const results = countries.filter(country =>
+        country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredCountries(results);
+    } else {
+      setFilteredCountries(countries);
+    }
   }, [searchTerm, countries]);
 
   const handleSearch = (event) => {
